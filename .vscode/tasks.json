@@ -41,7 +41,7 @@
 			"args": [
 				"-NoProfile",
 				"-Command",
-				"$root='F:\\01_Programming\\01_Project\\05_PQC\\ConstantsFuzzyExtractor'; Set-Location \"$root\\fuzzy\\tests\"; gcc -O2 -DNDEBUG -I.. -I\"$root\\liboqs\\build\\include\" -L\"$root\\liboqs\\build\\lib\" timing_test.c ..\\fuzzy_extractor.c -loqs -o timing_test.exe"
+				"$root='${workspaceFolder}'; Set-Location \"$root\\fuzzy\\tests\"; gcc -O2 -DNDEBUG -I.. -I\"$root\\fuzzy\\third_party\\liboqs\\include\" -L\"$root\\fuzzy\\third_party\\liboqs\\lib\" timing_test.c ..\\fuzzy_extractor.c -loqs -o timing_test.exe"
 			],
 			"isBackground": false
 		},
@@ -53,16 +53,16 @@
 				"-O2",
 				"-DNDEBUG",
 				"-I",
-				"F:\\01_Programming\\01_Project\\05_PQC\\ConstantsFuzzyExtractor\\fuzzy",
+				"${workspaceFolder}\\fuzzy",
 				"-I",
-				"F:\\01_Programming\\01_Project\\05_PQC\\ConstantsFuzzyExtractor\\liboqs\\build\\include",
+				"${workspaceFolder}\\fuzzy\\third_party\\liboqs\\include",
 				"-L",
-				"F:\\01_Programming\\01_Project\\05_PQC\\ConstantsFuzzyExtractor\\liboqs\\build\\lib",
-				"F:\\01_Programming\\01_Project\\05_PQC\\ConstantsFuzzyExtractor\\fuzzy\\tests\\timing_test.c",
-				"F:\\01_Programming\\01_Project\\05_PQC\\ConstantsFuzzyExtractor\\fuzzy\\fuzzy_extractor.c",
+				"${workspaceFolder}\\fuzzy\\third_party\\liboqs\\lib",
+				"${workspaceFolder}\\fuzzy\\tests\\timing_test.c",
+				"${workspaceFolder}\\fuzzy\\fuzzy_extractor.c",
 				"-loqs",
 				"-o",
-				"F:\\01_Programming\\01_Project\\05_PQC\\ConstantsFuzzyExtractor\\fuzzy\\tests\\timing_test.exe"
+				"${workspaceFolder}\\fuzzy\\tests\\timing_test.exe"
 			],
 			"isBackground": false
 		}

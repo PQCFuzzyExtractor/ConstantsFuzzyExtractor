@@ -42,41 +42,28 @@ Get-Item .\fuzzy\liboqs.dll | Format-List Name,Length,LastWriteTime
 
 ### 2) (Optional) Rebuild liboqs yourself
 
-If you change `liboqs` code (e.g., `decrypt.c`) and want a fresh DLL:
+This repo is designed to build without a local `liboqs/` folder.
+If you modify liboqs sources (e.g., `decrypt.c`) you can rebuild liboqs in a separate checkout and then copy the artifacts into this repo:
 
-```powershell
-cd .\liboqs
-cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
-cmake --build build -j
-```
-
-This produces:
-
-- `liboqs\build\bin\liboqs.dll` (runtime DLL)
-- `liboqs\build\lib\liboqs.dll.a` (MinGW import library used at link time)
-- `liboqs\build\include\` (headers)
-
-If you want to update the shipped DLL under `fuzzy/`, copy it:
-
-```powershell
-Copy-Item -Force .\build\bin\liboqs.dll ..\fuzzy\liboqs.dll
-```
+- Runtime DLL: copy to `fuzzy/liboqs.dll`
+- MinGW import lib: copy to `fuzzy/third_party/liboqs/lib/liboqs.dll.a`
+- Headers: copy/update under `fuzzy/third_party/liboqs/include/oqs/`
 
 ### 3) Build the tests / benchmark
 
-All builds link against `liboqs\build\lib\liboqs.dll.a` via `-L ... -loqs`.
+All builds link against the vendored MinGW import library `fuzzy/third_party/liboqs/lib/liboqs.dll.a` via `-L ... -loqs`.
 
 From PowerShell:
 
 ```powershell
-$root = (Resolve-Path ..\).Path
-Set-Location $root\fuzzy\tests
+$root = (Resolve-Path .).Path   # repo root (after `cd ConstantsFuzzyExtractor`)
+Set-Location "$root\fuzzy\tests"
 
 # Smoke test
-gcc -O2 -DNDEBUG -I.. -I"$root\liboqs\build\include" -L"$root\liboqs\build\lib" test_fuzzy.c ..\fuzzy_extractor.c -loqs -o test_fuzzy.exe
+gcc -O2 -DNDEBUG -I.. -I"$root\fuzzy\third_party\liboqs\include" -L"$root\fuzzy\third_party\liboqs\lib" test_fuzzy.c ..\fuzzy_extractor.c -loqs -o test_fuzzy.exe
 
 # Timing harness (writes timing_results.csv)
-gcc -O2 -DNDEBUG -I.. -I"$root\liboqs\build\include" -L"$root\liboqs\build\lib" timing_test.c ..\fuzzy_extractor.c -loqs -o timing_test.exe
+gcc -O2 -DNDEBUG -I.. -I"$root\fuzzy\third_party\liboqs\include" -L"$root\fuzzy\third_party\liboqs\lib" timing_test.c ..\fuzzy_extractor.c -loqs -o timing_test.exe
 ```
 
 ### 4) Run (force loading the DLL from `fuzzy/`)
@@ -85,7 +72,7 @@ At runtime, Windows resolves `liboqs.dll` from the current process search order 
 To ensure you use the DLL that is shipped under `fuzzy/`, prepend `fuzzy/` to `PATH`:
 
 ```powershell
-$root = (Resolve-Path ..\).Path
+$root = (Resolve-Path .).Path
 $oldPath = $env:PATH
 $env:PATH = "$root\fuzzy;" + $oldPath
 
